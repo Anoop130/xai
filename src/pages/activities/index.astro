@@ -3,6 +3,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import SessionFilter from '../../components/islands/SessionFilter.tsx';
+import { withBase } from '../../lib/urls';
 
 // fetch and sort sessions newest first
 const allSessions = await getCollection('sessions');
@@ -24,7 +25,6 @@ const sessionProps = sorted.map((s) => ({
   summary: s.data.summary,
 }));
 
-const base = import.meta.env.BASE_URL;
 ---
 
 <Base
@@ -37,5 +37,5 @@ const base = import.meta.env.BASE_URL;
   </div>
 
   <!-- SessionFilter is a React island loaded on the client -->
-  <SessionFilter sessions={sessionProps} base={base} client:load />
+  <SessionFilter sessions={sessionProps} base={withBase()} client:load />
 </Base>

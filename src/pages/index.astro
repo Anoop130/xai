@@ -3,6 +3,7 @@
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import { withBase } from '../lib/urls';
 
 // fetch recent sessions sorted newest first
 const allSessions = await getCollection('sessions');
@@ -19,8 +20,6 @@ const allStudents = await getCollection('students');
 const currentStudents = currentCohort
   ? allStudents.filter((s) => s.data.cohortYear === currentCohort.data.year)
   : [];
-
-const base = import.meta.env.BASE_URL;
 
 // map topic value to display label
 const TOPIC_LABELS: Record<string, string> = {
@@ -113,19 +112,19 @@ const eligibilityReqs = [
       <!-- primary CTAs -->
       <div class="flex gap-4 justify-center flex-wrap">
         <a
-          href={`${base}activities/`}
+          href={withBase('activities/')}
           class="px-6 py-3 bg-white text-maroon-800 rounded-lg font-semibold hover:bg-maroon-50 transition-colors"
         >
           View sessions
         </a>
         <a
-          href={`${base}cohorts/`}
+          href={withBase('cohorts/')}
           class="px-6 py-3 border border-white/40 text-white rounded-lg font-semibold hover:bg-white/10 transition-colors"
         >
           Meet cohorts
         </a>
         <a
-          href={`${base}about/`}
+          href={withBase('about/')}
           class="px-6 py-3 border border-white/40 text-white rounded-lg font-semibold hover:bg-white/10 transition-colors"
         >
           Learn more
@@ -243,7 +242,7 @@ const eligibilityReqs = [
           <h2 class="text-3xl font-bold text-maroon-900 mb-1">Cohort {currentCohort.data.year}</h2>
           <p class="text-gray-600 max-w-xl">{currentCohort.data.description}</p>
         </div>
-        <a href={`${base}cohorts/`} class="text-sm text-maroon-700 hover:underline font-medium whitespace-nowrap">
+        <a href={withBase('cohorts/')} class="text-sm text-maroon-700 hover:underline font-medium whitespace-nowrap">
           All cohorts
         </a>
       </div>
@@ -292,18 +291,18 @@ const eligibilityReqs = [
     <div class="max-w-7xl mx-auto px-6">
       <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
         <h2 class="text-2xl font-bold text-maroon-900">Recent Activities</h2>
-        <a href={`${base}activities/`} class="text-sm text-maroon-700 hover:underline font-medium">
+        <a href={withBase('activities/')} class="text-sm text-maroon-700 hover:underline font-medium">
           All activities
         </a>
       </div>
       <div class="space-y-5">
         {recentSessions.map((session) => (
           <a
-            href={`${base}activities/${session.id}/`}
+            href={withBase(`activities/${session.id}/`)}
             class="group grid md:grid-cols-[260px_1fr] overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-maroon-300 hover:shadow-lg transition-all"
           >
             <img
-              src={`${base}images/activity/exlent-flyer.jpg`}
+              src={withBase('images/activity/exlent-flyer.jpg')}
               alt=""
               class="h-48 md:h-full w-full object-cover object-top"
               loading="lazy"

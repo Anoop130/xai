@@ -3,6 +3,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import CohortYearSwitcher from '../../components/islands/CohortYearSwitcher.tsx';
+import { withBase } from '../../lib/urls';
 
 // fetch cohorts and all students
 const cohorts = await getCollection('cohorts');
@@ -34,7 +35,6 @@ const studentProps = students.map((s) => ({
   cohortYear: s.data.cohortYear,
 }));
 
-const base = import.meta.env.BASE_URL;
 ---
 
 <Base
@@ -50,5 +50,5 @@ const base = import.meta.env.BASE_URL;
   </div>
 
   <!-- CohortYearSwitcher is a React island loaded on the client -->
-  <CohortYearSwitcher cohorts={cohortProps} students={studentProps} base={base} client:load />
+  <CohortYearSwitcher cohorts={cohortProps} students={studentProps} base={withBase()} client:load />
 </Base>

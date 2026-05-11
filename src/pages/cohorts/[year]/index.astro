@@ -3,6 +3,7 @@
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../../../layouts/Base.astro';
+import { withBase } from '../../../lib/urls';
 
 // generate one route per cohort entry
 export async function getStaticPaths() {
@@ -19,7 +20,6 @@ export async function getStaticPaths() {
 }
 
 const { cohort, students } = Astro.props;
-const base = import.meta.env.BASE_URL;
 ---
 
 <Base
@@ -28,7 +28,7 @@ const base = import.meta.env.BASE_URL;
 >
   <!-- breadcrumb -->
   <nav class="text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
-    <a href={`${base}cohorts/`} class="hover:text-maroon-700">Cohorts</a>
+    <a href={withBase('cohorts/')} class="hover:text-maroon-700">Cohorts</a>
     <span class="mx-2" aria-hidden="true">/</span>
     <span class="text-gray-900">{cohort.data.year}</span>
   </nav>
