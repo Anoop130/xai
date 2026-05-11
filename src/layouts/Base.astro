@@ -1,0 +1,66 @@
+---
+// root layout: wraps all pages with head, nav, and footer
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  fullWidth?: boolean;
+}
+
+const { title, description, fullWidth = false } = Astro.props;
+// base path prefix used for all internal links
+const base = import.meta.env.BASE_URL;
+// canonical URL for SEO and OG tags
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'http://localhost:4321');
+const siteTitle = `${title} | NSF ExLENT XAI`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <title>{siteTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={siteTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <link rel="sitemap" href={`${base}sitemap-index.xml`} />
+  </head>
+  <body class="min-h-screen flex flex-col bg-white text-gray-900 antialiased">
+    <!-- site navigation -->
+    <header class="bg-maroon-900 sticky top-0 z-10">
+      <nav
+        class="max-w-7xl mx-auto px-6 py-3 flex items-center gap-6"
+        aria-label="Main navigation"
+      >
+        <a href={base} class="font-bold text-white hover:text-maroon-200 text-lg tracking-tight mr-4">
+          NSF ExLENT XAI
+        </a>
+        <a href={`${base}activities/`} class="text-sm text-white/75 hover:text-white transition-colors">
+          Activities
+        </a>
+        <a href={`${base}cohorts/`} class="text-sm text-white/75 hover:text-white transition-colors">
+          Cohorts
+        </a>
+        <a href={`${base}about/`} class="text-sm text-white/75 hover:text-white transition-colors">
+          About
+        </a>
+      </nav>
+    </header>
+
+    <!-- page content injected here -->
+    <main class={`flex-1 w-full${fullWidth ? '' : ' max-w-5xl mx-auto px-4 py-10'}`}>
+      <slot />
+    </main>
+
+    <!-- site footer -->
+    <footer class="bg-maroon-900 text-white/60 py-6 text-sm text-center">
+      <p class="font-medium text-white/80">NSF ExLENT XAI Initiative &middot; Mississippi State University</p>
+      <p class="mt-1">anoopmishra &middot; {new Date().getFullYear()}</p>
+    </footer>
+  </body>
+</html>

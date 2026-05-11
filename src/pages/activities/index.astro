@@ -1,0 +1,41 @@
+---
+// activities index: all sessions, filterable via the SessionFilter React island
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import SessionFilter from '../../components/islands/SessionFilter.tsx';
+
+// fetch and sort sessions newest first
+const allSessions = await getCollection('sessions');
+const sorted = allSessions.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+// serialize to plain objects so React island props survive JSON transport
+const sessionProps = sorted.map((s) => ({
+  id: s.id,
+  date: s.data.date.toISOString(),
+  week: s.data.week,
+  year: s.data.year,
+  title: s.data.title,
+  presenter: s.data.presenter,
+  topic: s.data.topic,
+  slidesUrl: s.data.slidesUrl,
+  recordingUrl: s.data.recordingUrl,
+  summary: s.data.summary,
+}));
+
+const base = import.meta.env.BASE_URL;
+---
+
+<Base
+  title="Activities"
+  description="All activity logs for the NSF ExLENT XAI Initiative."
+>
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-maroon-900 mb-2">Activities</h1>
+    <p class="text-gray-600">Syllabus based activities, filterable by year and topic.</p>
+  </div>
+
+  <!-- SessionFilter is a React island loaded on the client -->
+  <SessionFilter sessions={sessionProps} base={base} client:load />
+</Base>

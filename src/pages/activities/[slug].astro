@@ -1,0 +1,94 @@
+---
+// per session detail page with rendered Markdown content
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+// generate one static route per session entry
+export async function getStaticPaths() {
+  const sessions = await getCollection('sessions');
+  return sessions.map((session) => ({
+    params: { slug: session.id },
+    props: { session },
+  }));
+}
+
+const { session } = Astro.props;
+const { Content } = await render(session);
+const { title, date, week, presenter, topic, slidesUrl, recordingUrl, summary } = session.data;
+const base = import.meta.env.BASE_URL;
+
+// map topic enum to display label
+const TOPIC_LABELS: Record<string, string> = {
+  ai: 'AI',
+  ml: 'ML',
+  'data-science': 'Data Science',
+  tooling: 'Tooling',
+  guest: 'Guest',
+};
+---
+
+<Base title={title} description={summary}>
+  <div class="max-w-2xl">
+    <!-- breadcrumb navigation -->
+    <nav class="text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+      <a href={`${base}activities/`} class="hover:text-indigo-600">Activities</a>
+      <span class="mx-2" aria-hidden="true">/</span>
+      <span class="text-gray-900">{title}</span>
+    </nav>
+
+    <!-- session metadata -->
+    <div class="flex items-center gap-2 mb-3">
+      <span
+        class="text-xs font-semibold uppercase tracking-wide text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded"
+      >
+        {TOPIC_LABELS[topic] ?? topic}
+      </span>
+      <span class="text-sm text-gray-500">
+        Week {week} &middot; {
+          date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        }
+      </span>
+    </div>
+
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
+    {presenter && <p class="text-gray-600 mb-4">Presenter: {presenter}</p>}
+
+    <!-- resource links shown when available -->
+    {
+      (slidesUrl || recordingUrl) && (
+        <div class="flex gap-4 mb-6">
+          {slidesUrl && (
+            <a
+              href={slidesUrl}
+              class="text-indigo-600 hover:underline text-sm font-medium"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Slides
+            </a>
+          )}
+          {recordingUrl && (
+            <a
+              href={recordingUrl}
+              class="text-indigo-600 hover:underline text-sm font-medium"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Recording
+            </a>
+          )}
+        </div>
+      )
+    }
+
+    <!-- rendered Markdown body -->
+    <div class="prose prose-gray max-w-none">
+      <Content />
+    </div>
+  </div>
+</Base>
